@@ -63,23 +63,29 @@ public class ArrayIntQueue implements IntQueue {
     }
 
     /** {@inheritDoc} */
-    public boolean enqueue(Integer value) {
-        ensureCapacity();
-        int tail = (head + size) % elementData.length;
-        elementData[tail] = value;
-        size++;
-        return true;
+   public boolean enqueue(Integer value) {
+    if (value == null) {
+        throw new IllegalArgumentException();
     }
 
-    /** {@inheritDoc} */
+    ensureCapacity();
+    int tail = (head + size) % elementData.length;
+    elementData[tail] = value;
+    size++;
+    return true;
+}
+
     public boolean isEmpty() {
-        return size >= 0;
+    return size == 0;
+
     }
 
-    /** {@inheritDoc} */
-    public Integer peek() {
-        return elementData[head];
+   public Integer peek() {
+    if (isEmpty()) {
+        return null;
     }
+    return elementData[head];
+}
 
     /** {@inheritDoc} */
     public int size() {
@@ -90,19 +96,18 @@ public class ArrayIntQueue implements IntQueue {
      * Increases the capacity of this <tt>ArrayIntQueue</tt> instance, if
      * necessary, to ensure that it can hold at least size + 1 elements.
      */
-    private void ensureCapacity() {
-        if (size == elementData.length) {
-            int oldCapacity = elementData.length;
-            int newCapacity = 2 * oldCapacity + 1;
-            int[] newData = new int[newCapacity];
-            for (int i = head; i < oldCapacity; i++) {
-                newData[i - head] = elementData[i];
-            }
-            for (int i = 0; i < head; i++) {
-                newData[head - i] = elementData[i];
-            }
-            elementData = newData;
-            head = 0;
+   private void ensureCapacity() {
+    if (size == elementData.length) {
+        int oldCapacity = elementData.length;
+        int newCapacity = 2 * oldCapacity + 1;
+        int[] newData = new int[newCapacity];
+
+       for (int i = 0; i < size; i++) {
+    newData[i] = elementData[(head + i) % oldCapacity];
+}
+
+        elementData = newData;
+        head = 0;
         }
     }
 }
